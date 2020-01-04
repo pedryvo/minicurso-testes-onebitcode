@@ -2,11 +2,20 @@ require 'rails_helper'
 
 RSpec.describe User, type: :model do
   it 'is invalid if the level is not between 1 and 99' do
-    expect(User.create(nickname: 'Josh', kind: :wizard, level: 100)).to_not be_valid
+    nickname = Faker::Name.first_name
+    kind = %i[ knight wizard ].sample
+    level = Faker::Number.between(from: 100, to: 9999)
+    user = User.new(nickname: nickname, kind: kind, level: level)
+
+    expect(user).to_not be_valid
   end
 
   it 'returns the correct hero title' do
-    user = User.create(nickname: 'Josh', kind: :wizard, level: 1)
-    expect(user.title).to eq('wizard Josh #1')
+    nickname = Faker::Name.first_name
+    kind = %i[ knight wizard ].sample
+    level = Faker::Number.between(from: 1, to: 99)
+    user = User.create(nickname: nickname, kind: kind, level: level)
+
+    expect(user.title).to eq("#{kind} #{nickname} ##{level}")
   end
 end
