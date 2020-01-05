@@ -31,12 +31,6 @@ RSpec.describe "Users", type: :request do
           post users_path, params: { user: { kind: '', name: '', level: '' }}
         }.to_not change(User, :count)
       end
-
-      it 'creates a user' do
-        expect{
-          post users_path, params: { user: { kind: 'wizard', name: 'Josh', level: '3' }}
-        }.to change(User, :count)
-      end
     end
   end
 end
