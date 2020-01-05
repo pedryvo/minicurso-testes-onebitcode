@@ -57,4 +57,30 @@ RSpec.describe "Weapons", type: :request do
       end
     end
   end
+
+  describe 'DELETE /weapons' do
+    it 'deletes a weapon by id' do
+      create_list(:weapon, 6)
+      id = (1..6).to_a.sample
+      expect{
+        delete weapon_path(id)
+      }.to change(Weapon, :count)
+    end
+  end
+
+  describe 'GET /weapon/:id' do
+    it 'shows details of all weapons' do
+      weapons = create_list(:weapon, 6)
+      weapons.each do |weapon|
+        get weapon_path(weapon.id)
+        expect(response.body).to include(weapon.name)
+        expect(response.body).to include(weapon.description)
+        expect(response.body).to include(weapon.level.to_s)
+        expect(response.body).to include(weapon.power_base.to_s)
+        expect(response.body).to include(weapon.power_step.to_s)
+        expect(response.body).to include(weapon.current_power.to_s)
+        expect(response.body).to include(weapon.title)
+      end
+    end
+  end
 end
