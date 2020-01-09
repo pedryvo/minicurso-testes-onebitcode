@@ -35,16 +35,15 @@ RSpec.describe "Enemies", type: :request do
   end
 
   describe 'DELETE /enemies' do
+    let(:enemy) { create(:enemy) }
+    before(:each) { delete "/enemies/#{enemy.id}" }
+
     context 'when the enemy exists' do
       it 'returns status code 204' do
-        enemy = create(:enemy)
-        delete "/enemies/#{enemy.id}"
         expect(response).to have_http_status(204)
       end
 
       it 'destroy the record' do
-        enemy = create(:enemy)
-        delete "/enemies/#{enemy.id}"
         expect { enemy.reload }.to raise_error ActiveRecord::RecordNotFound
       end
     end
