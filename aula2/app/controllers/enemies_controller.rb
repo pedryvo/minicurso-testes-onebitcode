@@ -1,5 +1,19 @@
 class EnemiesController < ApplicationController
-  before_action :set_enemy
+  before_action :set_enemy, only: %i[ update show update destroy ]
+
+  def index
+    @enemies = Enemy.all
+    render json: @enemies
+  end
+
+  def show
+    render json: @enemy
+  end
+
+  def create
+    @enemy = Enemy.create(enemy_params)
+    head :created, location: @enemy
+  end
 
   def update
     if @enemy.update(enemy_params)

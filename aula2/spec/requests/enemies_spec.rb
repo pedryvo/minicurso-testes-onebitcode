@@ -1,6 +1,60 @@
 require 'rails_helper'
 
 RSpec.describe "Enemies", type: :request do
+  describe 'GET /enemies' do
+    context 'when there are enemies' do
+      let(:enemies_attributes) { attributes_for_list(:enemy, 5) }
+
+      before(:each) {
+        enemies_attributes.each do |enemy_attribute|
+          post enemies_path, params: enemy_attribute
+        end
+      }
+
+      it 'returns a list of enemies' do
+        get enemies_path
+        response_hash = JSON.parse(response.body, symbolize_names: true)
+
+        response_hash.each_with_index do |element, index|
+          expect(element).to include(enemies_attributes[index])
+        end 
+      end
+
+      it 'returns a specific enemy by id' do
+        get '/enemies/1'
+        response_hash = JSON.parse(response.body, symbolize_names: true)
+        expect(response_hash).to include(enemies_attributes[0])
+      end
+    end
+
+    context 'when there are no enemies' do
+      it 'returns status code 404' do
+        get enemies_path
+        expect(response.body).to eq('[]')
+      end
+      it 'returns a not found message' do
+        get '/enemies/1'
+        expect(response.body).to match(/Couldn't find Enemy/)
+      end
+    end
+  end
+
+  describe 'POST /enemies' do
+    context 'creating enemies' do
+      let(:enemies_attributes) { attributes_for_list(:enemy, 5) }
+
+      it 'creates 5 enemies' do
+        enemies_attributes.each do |enemy_attribute|
+          post enemies_path, params: enemy_attribute
+        end
+
+        get '/enemies/1'
+        response_hash = JSON.parse(response.body, symbolize_names: true)
+        expect(response_hash).to include(enemies_attributes[0])
+      end
+    end
+  end
+  
   describe 'PUT /enemies' do
     context 'when the enemy exists' do
       let(:enemy) { create(:enemy) }
